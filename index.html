@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Health Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/96/heart-with-pulse--v1.png"/>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: linear-gradient(120deg, #e0eafc 0%, #cfdef3 100%);
+            margin: 0;
+            color: #222;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 2.7rem;
+            color: #2a5298;
+            letter-spacing: 1px;
+        }
+        .container {
+            width: 110%;    
+            max-width: 1600px;
+            margin: 30px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 6px 32px rgba(42,82,152,0.10);
+            padding: 36px 2vw 28px 2vw;
+        }
+        .patient-select {
+            margin: 0 0 28px 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .patient-select label {
+            font-weight: 700;
+            color: #2a5298;
+            font-size: 1.1rem;
+        }
+        .patient-select select {
+            padding: 7px 14px;
+            border-radius: 7px;
+            border: 1.5px solid #b0c4de;
+            font-size: 1.05rem;
+            background: #f7fafd;
+        }
+        .patient-info {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 18px;
+            font-size: 1.18rem;
+            color: #2a5298;
+            background: #f7fafd;
+            border-radius: 10px;
+            padding: 14px 22px;
+            box-shadow: 0 1px 4px rgba(42,82,152,0.06);
+        }
+        .patient-info .fa {
+            color: #4e8cff;
+            margin-right: 7px;
+        }
+        .summary {
+            margin: 0 0 36px 0;
+            background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+            padding: 22px 28px;
+            border-radius: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 32px;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(42,82,152,0.04);
+        }
+        .summary-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 180px;
+        }
+        .summary-item {
+            min-width: 170px;
+            font-size: 1.13rem;
+            color: #2a5298;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f7fafd;
+            border-radius: 8px;
+            padding: 10px 14px;
+            box-shadow: 0 1px 4px rgba(42,82,152,0.06);
+            position: relative;
+        }
+        .summary-item.critical {
+            background: #ffeaea;
+            color: #c0392b;
+            font-weight: bold;
+        }
+        .summary-item .fa-info-circle {
+            color: #4e8cff;
+            font-size: 1.1em;
+            margin-left: 4px;
+            cursor: pointer;
+        }
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            margin-top: 28px;
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(42,82,152,0.04);
+        }
+        th, td {
+            border: none;
+            padding: 13px 10px;
+            text-align: center;
+        }
+        th {
+            background: #e0eafc;
+            color: #2a5298;
+            font-weight: 700;
+            font-size: 1.08rem;
+            border-bottom: 2px solid #b0c4de;
+        }
+        tr:nth-child(even) td {
+            background: #f7fafd;
+        }
+        tr:hover td {
+            background: #e6f0fa;
+        }
+        td {
+            font-size: 1.04rem;
+            color: #2a5298;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 36px;
+            justify-content: space-between;
+            width: 100%;
+        }
+        .chart-container {
+            flex: 1 1 370px;
+            min-width: 340px;
+            background: #f9fafc;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(42,82,152,0.04);
+            margin-bottom: 36px;
+            padding: 22px 14px 14px 14px;
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+        .chart-explanation {
+            color: #6a7ca0;
+            font-size: 1.01rem;
+            text-align: center;
+            margin-bottom: 10px;
+            min-height: 32px;
+        }
+        .chart-container .fa-info-circle {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            color: #b0c4de;
+            font-size: 1.1em;
+            cursor: pointer;
+            z-index: 2;
+        }
+        .legend {
+            display: flex;
+            gap: 18px;
+            justify-content: center;
+            margin: 10px 0 0 0;
+            font-size: 0.98rem;
+            flex-wrap: wrap;
+            z-index: 1;
+        }
+        .legend span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f7fafd;
+            border-radius: 6px;
+            padding: 2px 8px;
+        }
+        .legend-dot {
+            width: 16px;
+            height: 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+        .legend-dot.hr { background: #ff6384; }
+        .legend-dot.avg { background: #36a2eb; }
+        .legend-dot.goal { background: #ffcd56; }
+        .legend-dot.steps { background: #4bc0c0; }
+        .legend-dot.sleep { background: #9966ff; }
+        .legend-dot.o2 { background: #36a2eb; }
+        .legend-dot.lowO2 { background: #e74c3c; }
+        .legend-dot.ecg { background: #ff6384; }
+        .legend-dot.tachy { background: orange; }
+        .legend-dot.brady { background: green; }
+        @media (max-width: 1100px) {
+            .charts { flex-direction: column; gap: 0; }
+            .chart-container { min-width: 0; }
+            .container { padding: 12px 2vw; }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+</head>
+<body>
+    <div style="display:flex;justify-content:center;align-items:center;margin-top:24px;margin-bottom:-18px;">
+        <img src="https://img.icons8.com/color/96/heart-with-pulse--v1.png" alt="Health Dashboard Logo" style="height:64px;width:64px;margin-right:16px;">
+        <h1 style="margin:0;">Patient Health Dashboard</h1>
+    </div>
+    <div class="container">
+        <div class="patient-select">
+            <label for="patientSelect">Select Patient:</label>
+            <select id="patientSelect"></select>
+        </div>
+        <div class="patient-info" id="patientInfo" style="display:none;">
+            <div><i class="fa fa-user-md"></i><strong>Doctor:</strong> <span id="doctorName"></span></div>
+            <div><i class="fa fa-calendar-alt"></i><strong>Last Visit:</strong> <span id="lastVisit"></span></div>
+        </div>
+        <div class="summary" id="summary"></div>
+        <div class="charts">
+            <div class="chart-container">
+                <i class="fa fa-info-circle" title="Heart rate monitoring helps detect silent heart conditions, dehydration, and stress. Watch for spikes or drops."></i>
+                <div class="chart-explanation">Heart rate monitoring helps detect silent heart conditions, dehydration, and stress. Watch for spikes or drops.</div>
+                <canvas id="heartRateChart"></canvas>
+                <!-- Remove static legend, Chart.js will render the legend below -->
+            </div>
+            <div class="chart-container">
+                <i class="fa fa-info-circle" title="Step count supports fitness and health tracking. Consistent activity is key for well-being."></i>
+                <div class="chart-explanation">Step count supports fitness and health tracking. Consistent activity is key for well-being.</div>
+                <canvas id="stepsChart"></canvas>
+                <!-- Remove static legend, Chart.js will render the legend below -->
+            </div>
+        </div>
+        <div class="charts">
+            <div class="chart-container">
+                <i class="fa fa-info-circle" title="Sleep tracking reveals sleep quality and can help detect sleep disorders and heart/metabolic issues."></i>
+                <div class="chart-explanation">Sleep tracking reveals sleep quality and can help detect sleep disorders and heart/metabolic issues.</div>
+                <canvas id="sleepChart"></canvas>
+                <!-- Remove static legend, Chart.js will render the legend below -->
+            </div>
+            <div class="chart-container">
+                <i class="fa fa-info-circle" title="Blood oxygen monitoring can detect respiratory and heart conditions. Low values may require attention."></i>
+                <div class="chart-explanation">Blood oxygen monitoring can detect respiratory and heart conditions. Low values may require attention.</div>
+                <canvas id="bloodOxygenChart"></canvas>
+                <!-- Remove static legend, Chart.js will render the legend below -->
+            </div>
+        </div>
+        <div class="charts">
+            <div class="chart-container" style="flex:1 1 100%; min-height: 120px;">
+                <i class="fa fa-info-circle" title="ECG waveform for each reading. Rhythm label shown above each waveform. Abnormal rhythms are visually distinct."></i>
+                <div class="chart-explanation">ECG waveform for each reading. Rhythm label shown above each waveform. Abnormal rhythms are visually distinct.</div>
+                <canvas id="ecgChart" style="display:none;"></canvas>
+                <div class="legend">
+                    <span><span class="legend-dot ecg"></span>ECG Waveform</span>
+                </div>
+            </div>
+        </div>
+        <div class="empty-space">Select a patient to view their health data trends and insights. Charts update as you switch patients.</div>
+        <table id="patientTable">
+            <thead id="tableHead"></thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+    </div>
+    <script>
+        let allData = [];
+        let charts = {};
+        fetch('/api/patient-data')
+            .then(response => response.json())
+            .then(data => {
+                allData = data;
+                const patientSelect = document.getElementById('patientSelect');
+                const uniquePatients = Array.from(new Set(data.map(row => row.id + '|' + row.name)));
+                patientSelect.innerHTML = uniquePatients.map(p => {
+                    const [id, name] = p.split('|');
+                    return `<option value="${id}">${name}</option>`;
+                }).join('');
+                patientSelect.addEventListener('change', () => renderPatient(patientSelect.value));
+                renderPatient(patientSelect.value || uniquePatients[0].split('|')[0]);
+            })
+            .catch(error => {
+                document.body.innerHTML += '<p style="color:red;">Failed to load data.</p>';
+            });
+
+        function renderPatient(patientId) {
+            const patientRows = allData.filter(row => row.id === patientId);
+            if (patientRows.length === 0) return;
+            patientRows.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const headers = Object.keys(patientRows[0]);
+            // Patient info section
+            const infoDiv = document.createElement('div');
+            infoDiv.className = 'patient-info';
+            const row = patientRows[0];
+            infoDiv.innerHTML = `
+                <span><i class="fa fa-user"></i><strong>${row.name}</strong></span>
+                <span><i class="fa fa-id-card"></i>ID: ${row.id}</span>
+                <span><i class="fa fa-birthday-cake"></i>Age: ${row.age}</span>
+                <span><i class="fa fa-stethoscope"></i>Diagnosis: ${row.diagnosis}</span>
+            `;
+            const container = document.querySelector('.container');
+            let oldInfo = document.querySelector('.patient-info');
+            if (oldInfo) oldInfo.remove();
+            container.insertBefore(infoDiv, document.getElementById('summary'));
+            // Table rendering
+            document.getElementById('tableHead').innerHTML = '<tr>' + headers.map(h => `<th>${h.replace(/_/g,' ').replace(/\b\w/g, l => l.toUpperCase())}</th>`).join('') + '</tr>';
+            document.getElementById('tableBody').innerHTML = patientRows.map(row => {
+                return '<tr>' + headers.map(h => `<td>${h === 'ecg_waveform' ? '<span title="Waveform data">[...Array]</span>' : row[h]}</td>`).join('') + '</tr>';
+            }).join('');
+            renderSummary(patientRows);
+            renderHeartRateChart(patientRows);
+            renderStepsChart(patientRows);
+            renderSleepChart(patientRows);
+            renderBloodOxygenChart(patientRows);
+            renderECGChart(patientRows);
+        }
+
+        function renderSummary(rows) {
+            const avg = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+            const summaryDiv = document.getElementById('summary');
+            const heartRates = rows.map(r => Number(r.heart_rate));
+            const steps = rows.map(r => Number(r.steps));
+            const sleep = rows.map(r => Number(r.sleep_hours));
+            const bloodO2 = rows.map(r => Number(r.blood_oxygen));
+            // Count only truly abnormal ECGs (not 'Normal Sinus Rhythm', 'Sinus Bradycardia', 'Sinus Tachycardia', 'Sinus Arrhythmia')
+            const normalRhythms = [/normal/i, /sinus bradycardia/i, /sinus tachycardia/i, /sinus arrhythmia/i];
+            const ecgAbnormal = rows.filter(r => !normalRhythms.some(rx => rx.test(r.ecg))).length;
+            const minO2 = Math.min(...bloodO2);
+            // Grouped summary with info icons and critical highlights
+            summaryDiv.innerHTML = `
+                <div class="summary-group">
+                    <div class="summary-item"><i class="fa fa-heartbeat"></i><strong>Avg HR:</strong> ${avg(heartRates).toFixed(1)} bpm <i class="fa fa-info-circle" title="Average heart rate across all readings."></i></div>
+                    <div class="summary-item"><i class="fa fa-arrow-up"></i><strong>Max HR:</strong> ${Math.max(...heartRates)} bpm <i class="fa fa-info-circle" title="Highest recorded heart rate."></i></div>
+                    <div class="summary-item"><i class="fa fa-arrow-down"></i><strong>Min HR:</strong> ${Math.min(...heartRates)} bpm <i class="fa fa-info-circle" title="Lowest recorded heart rate."></i></div>
+                </div>
+                <div class="summary-group">
+                    <div class="summary-item"><i class="fa fa-shoe-prints"></i><strong>Total Steps:</strong> ${steps.reduce((a, b) => a + b, 0)} <i class="fa fa-info-circle" title="Sum of all steps recorded."></i></div>
+                    <div class="summary-item"><i class="fa fa-bed"></i><strong>Avg Sleep:</strong> ${avg(sleep).toFixed(2)} hrs <i class="fa fa-info-circle" title="Average sleep hours per day."></i></div>
+                </div>
+                <div class="summary-group">
+                    <div class="summary-item${ecgAbnormal > 0 ? ' critical' : ''}"><i class="fa fa-exclamation-triangle"></i><strong>Abnormal ECG:</strong> ${ecgAbnormal} <i class="fa fa-info-circle" title="Number of readings with truly abnormal ECG rhythm (not just sinus variants)."></i></div>
+                    <div class="summary-item${minO2 <= 94 ? ' critical' : ''}"><i class="fa fa-tint"></i><strong>Lowest O₂:</strong> ${minO2}% <i class="fa fa-info-circle" title="Lowest blood oxygen value recorded. Below 94% is considered low."></i></div>
+                </div>
+            `;
+        }
+
+        function renderHeartRateChart(rows) {
+            const ctx = document.getElementById('heartRateChart').getContext('2d');
+            if (charts.heartRate) charts.heartRate.destroy();
+            const heartRates = rows.map(r => Number(r.heart_rate));
+            const avg = heartRates.reduce((a, b) => a + b, 0) / heartRates.length;
+            const minHR = Math.min(...heartRates, 40);
+            const maxHR = Math.max(...heartRates, 130);
+            const yMin = Math.max(40, Math.floor(minHR - 10));
+            const yMax = Math.min(130, Math.ceil(maxHR + 10));
+            charts.heartRate = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: rows.map(r => r.timestamp),
+                    datasets: [
+                        {
+                            label: 'Heart Rate',
+                            data: heartRates,
+                            borderColor: '#ff6384',
+                            backgroundColor: 'rgba(255, 99, 132, 0.15)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Average',
+                            data: Array(heartRates.length).fill(avg),
+                            borderColor: '#36a2eb',
+                            borderDash: [6,6],
+                            pointRadius: 0,
+                            fill: false,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: { display: true, text: 'Heart Rate Trend (bpm)', font: { size: 18 } },
+                        legend: {
+                            display: true,
+                            labels: {
+                                font: { size: 14 },
+                                generateLabels: function(chart) {
+                                    // Get default dataset labels
+                                    const datasets = Chart.defaults.plugins.legend.labels.generateLabels(chart);
+                                    // Add custom dotted line legends for thresholds
+                                    return [
+                                        ...datasets,
+                                        {
+                                            text: 'Tachycardia Threshold (100 bpm)',
+                                            fillStyle: 'rgba(0,0,0,0)',
+                                            strokeStyle: 'orange',
+                                            lineWidth: 2,
+                                            borderDash: [4,4], // dotted
+                                            hidden: false,
+                                            datasetIndex: null
+                                        },
+                                        {
+                                            text: 'Bradycardia Threshold (60 bpm)',
+                                            fillStyle: 'rgba(0,0,0,0)',
+                                            strokeStyle: 'green',
+                                            lineWidth: 2,
+                                            borderDash: [4,4], // dotted
+                                            hidden: false,
+                                            datasetIndex: null
+                                        }
+                                    ];
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} bpm`;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                tachy: {
+                                    type: 'line',
+                                    yMin: 100,
+                                    yMax: 100,
+                                    borderColor: 'orange',
+                                    borderWidth: 2,
+                                    borderDash: [4,4],
+                                    label: {
+                                        display: false // Hide label to reduce obstruction
+                                    }
+                                },
+                                brady: {
+                                    type: 'line',
+                                    yMin: 60,
+                                    yMax: 60,
+                                    borderColor: 'green',
+                                    borderWidth: 2,
+                                    borderDash: [4,4],
+                                    label: {
+                                        display: false // Hide label to reduce obstruction
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: yMin,
+                            max: yMax,
+                            title: { display: true, text: 'Heart Rate (bpm)' },
+                            grid: { display: true, color: '#e0eafc' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Timestamp' },
+                            grid: { display: false }
+                        }
+                    },
+                    responsive: true,
+                }
+            });
+        }
+
+        function renderStepsChart(rows) {
+            const ctx = document.getElementById('stepsChart').getContext('2d');
+            if (charts.steps) charts.steps.destroy();
+            const steps = rows.map(r => Number(r.steps));
+            const maxSteps = Math.max(...steps, 10000);
+            const yMax = Math.ceil(maxSteps * 1.1 / 1000) * 1000;
+            charts.steps = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: rows.map(r => r.timestamp),
+                    datasets: [
+                        {
+                            label: 'Steps',
+                            data: steps,
+                            backgroundColor: '#4bc0c0',
+                            borderRadius: 6,
+                            maxBarThickness: 28
+                        },
+                        {
+                            label: 'Goal (10,000)',
+                            data: Array(steps.length).fill(10000),
+                            type: 'line',
+                            borderColor: '#ffcd56',
+                            borderDash: [6,6],
+                            fill: false,
+                            pointRadius: 0,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: { display: true, text: 'Daily Steps', font: { size: 18 } },
+                        legend: { display: true, labels: { font: { size: 14 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} steps`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: yMax,
+                            title: { display: true, text: 'Steps' },
+                            grid: { display: true, color: '#e0eafc' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Timestamp' },
+                            grid: { display: false }
+                        }
+                    },
+                    responsive: true,
+                }
+            });
+        }
+
+        function renderSleepChart(rows) {
+            const ctx = document.getElementById('sleepChart').getContext('2d');
+            if (charts.sleep) charts.sleep.destroy();
+            const sleep = rows.map(r => Number(r.sleep_hours));
+            const maxSleep = Math.max(...sleep, 8);
+            const yMax = Math.ceil(maxSleep + 1);
+            charts.sleep = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: rows.map(r => r.timestamp),
+                    datasets: [
+                        {
+                            label: 'Sleep Hours',
+                            data: sleep,
+                            backgroundColor: '#9966ff',
+                            borderRadius: 6,
+                            maxBarThickness: 28
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: { display: true, text: 'Sleep Duration (hours)', font: { size: 18 } },
+                        legend: { display: true, labels: { font: { size: 14 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y} hours`;
+                                },
+                                afterBody: function(context) {
+                                    const idx = context[0].dataIndex;
+                                    return 'Stage: ' + (sleep[idx] === 0 ? 'Awake' : 'Sleep');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: yMax,
+                            title: { display: true, text: 'Sleep Hours' },
+                            grid: { display: true, color: '#e0eafc' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Timestamp' },
+                            grid: { display: false }
+                        }
+                    },
+                    responsive: true,
+                }
+            });
+        }
+
+        function renderBloodOxygenChart(rows) {
+            const ctx = document.getElementById('bloodOxygenChart').getContext('2d');
+            if (charts.bloodOxygen) charts.bloodOxygen.destroy();
+            const bloodO2 = rows.map(r => Number(r.blood_oxygen));
+            const minO2 = Math.min(...bloodO2, 90);
+            const maxO2 = Math.max(...bloodO2, 100);
+            const yMin = Math.max(90, Math.floor(minO2 - 2));
+            const yMax = Math.min(100, Math.ceil(maxO2 + 2));
+            charts.bloodOxygen = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: rows.map(r => r.timestamp),
+                    datasets: [
+                        {
+                            label: 'Blood O₂',
+                            data: bloodO2,
+                            borderColor: '#36a2eb',
+                            backgroundColor: 'rgba(54, 162, 235, 0.15)',
+                            fill: true,
+                            tension: 0.3,
+                            pointRadius: 4,
+                            pointHoverRadius: 7,
+                            borderWidth: 3
+                        },
+                        {
+                            label: 'Low O₂ Threshold (94%)',
+                            data: Array(bloodO2.length).fill(94),
+                            borderColor: 'red',
+                            borderDash: [4,4],
+                            pointRadius: 0,
+                            fill: false,
+                            borderWidth: 2
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: { display: true, text: 'Blood Oxygen Levels (%)', font: { size: 18 } },
+                        legend: { display: true, labels: { font: { size: 14 } } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: ${context.parsed.y}%`;
+                                }
+                            }
+                        },
+                        annotation: {
+                            annotations: {
+                                lowO2: {
+                                    type: 'line',
+                                    yMin: 94,
+                                    yMax: 94,
+                                    borderColor: 'red',
+                                    borderWidth: 2,
+                                    label: {
+                                        content: 'Low O₂',
+                                        enabled: true,
+                                        position: 'end',
+                                        color: 'red',
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: yMin,
+                            max: yMax,
+                            title: { display: true, text: 'Blood Oxygen (%)' },
+                            grid: { display: true, color: '#e0eafc' }
+                        },
+                        x: {
+                            title: { display: true, text: 'Timestamp' },
+                            grid: { display: false }
+                        }
+                    },
+                    responsive: true,
+                }
+            });
+        }
+
+        function renderECGChart(rows) {
+            // Remove old chart if exists
+            const ecgContainer = document.getElementById('ecgChart').parentElement;
+            // Remove previous waveform grid if present
+            let oldGrid = document.getElementById('ecgWaveformGrid');
+            if (oldGrid) oldGrid.remove();
+            // Create a grid for mini ECG charts
+            const grid = document.createElement('div');
+            grid.id = 'ecgWaveformGrid';
+            grid.style.display = 'grid';
+            grid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(180px, 1fr))';
+            grid.style.gap = '18px';
+            grid.style.marginTop = '18px';
+            rows.forEach((row, i) => {
+                const cell = document.createElement('div');
+                // Determine severity
+                const rhythm = (row.ecg || '').toLowerCase();
+                let bgColor = '#eafbe7'; // green default
+                if (/arrest|asystole|vfib|vtach|block|pause|fibrillation|abnormal/.test(rhythm) && !/sinus/.test(rhythm)) {
+                    bgColor = '#ffeaea'; // red for serious
+                } else if (/tachy|brady|afib|flutter|arrhythmia|ectopic|premature|escape|warning/.test(rhythm)) {
+                    bgColor = '#fffbe6'; // yellow for warning
+                }
+                cell.style.background = bgColor;
+                cell.style.borderRadius = '10px';
+                cell.style.boxShadow = '0 1px 4px rgba(42,82,152,0.06)';
+                cell.style.padding = '10px 8px 6px 8px';
+                cell.style.display = 'flex';
+                cell.style.flexDirection = 'column';
+                cell.style.alignItems = 'center';
+                cell.style.position = 'relative';
+                // Rhythm label
+                const label = document.createElement('div');
+                label.textContent = row.ecg;
+                label.style.fontWeight = 'bold';
+                label.style.fontSize = '1.01rem';
+                label.style.color = bgColor === '#ffeaea' ? '#c0392b' : (bgColor === '#fffbe6' ? '#bfa100' : '#2a5298');
+                label.style.marginBottom = '2px';
+                label.title = row.timestamp;
+                cell.appendChild(label);
+                // Mini chart canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = 160;
+                canvas.height = 60;
+                cell.appendChild(canvas);
+                // Timestamp
+                const ts = document.createElement('div');
+                ts.textContent = row.timestamp;
+                ts.style.fontSize = '0.93em';
+                ts.style.color = '#6a7ca0';
+                ts.style.marginTop = '2px';
+                cell.appendChild(ts);
+                grid.appendChild(cell);
+                // Draw waveform
+                setTimeout(() => {
+                    new Chart(canvas.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: row.ecg_waveform.map((_, idx) => idx),
+                            datasets: [{
+                                data: row.ecg_waveform,
+                                borderColor: bgColor === '#ffeaea' ? '#c0392b' : (bgColor === '#fffbe6' ? '#bfa100' : '#ff6384'),
+                                backgroundColor: 'rgba(255,99,132,0.07)',
+                                pointRadius: 0,
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            plugins: { 
+                                legend: { display: false },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return `ECG: ${context.parsed.y.toFixed(2)} mV`;
+                                        }
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: { display: false },
+                                y: { display: true, min: Math.min(...row.ecg_waveform)-0.2, max: Math.max(...row.ecg_waveform)+0.2, title: { display: true, text: 'mV' }, grid: { color: '#e0eafc' } }
+                            },
+                            elements: { line: { borderJoinStyle: 'round' } },
+                            animation: false,
+                            responsive: false,
+                            maintainAspectRatio: false
+                        }
+                    });
+                }, 0);
+            });
+            ecgContainer.appendChild(grid);
+            // Remove old chart canvas
+            const oldCanvas = document.getElementById('ecgChart');
+            if (oldCanvas) oldCanvas.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
