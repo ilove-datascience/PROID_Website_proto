@@ -212,6 +212,14 @@
             .chart-container { min-width: 0; }
             .container { padding: 12px 2vw; }
         }
+        /* Add flashing red animation for high risk */
+        .flash-red {
+            animation: flashRed 1s infinite alternate;
+        }
+        @keyframes flashRed {
+            0% { color: #e74c3c; background: #fff; }
+            100% { color: #fff; background: #e74c3c; }
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0"></script>
@@ -339,8 +347,28 @@
             const normalRhythms = [/normal/i, /sinus bradycardia/i, /sinus tachycardia/i, /sinus arrhythmia/i];
             const ecgAbnormal = rows.filter(r => !normalRhythms.some(rx => rx.test(r.ecg))).length;
             const minO2 = Math.min(...bloodO2);
-            // Grouped summary with info icons and critical highlights
+            // Risk score and category (show for the latest row)
+            const latest = rows[rows.length - 1] || {};
+            // Color coding for risk category
+            let riskColor = '#2ecc40'; // green
+            let riskClass = '';
+            if (latest.risk_category === 'High') {
+                riskColor = '#e74c3c'; // red
+                riskClass = 'flash-red';
+            } else if (latest.risk_category === 'Moderate') {
+                riskColor = '#ff9800'; // orange
+            } else if (latest.risk_category === 'Mid') {
+                riskColor = '#2980ef'; // blue
+            }
             summaryDiv.innerHTML = `
+                <div class="summary-group">
+                    <div class="summary-item" style="color:${riskColor};font-weight:bold;" id="riskScoreBox">
+                        <i class="fa fa-thermometer-half"></i><strong>Risk Score:</strong> <span class="${riskClass}">${latest.risk_score ?? 'N/A'} / 15</span> <i class="fa fa-info-circle" title="Calculated risk score (higher means greater risk)"></i>
+                    </div>
+                    <div class="summary-item" style="color:${riskColor};font-weight:bold;">
+                        <i class="fa fa-flag"></i><strong>Risk Category:</strong> ${latest.risk_category ?? 'N/A'} <i class="fa fa-info-circle" title="Risk category based on score: Low, Mid, Moderate, High"></i>
+                    </div>
+                </div>
                 <div class="summary-group">
                     <div class="summary-item"><i class="fa fa-heartbeat"></i><strong>Avg HR:</strong> ${avg(heartRates).toFixed(1)} bpm <i class="fa fa-info-circle" title="Average heart rate across all readings."></i></div>
                     <div class="summary-item"><i class="fa fa-arrow-up"></i><strong>Max HR:</strong> ${Math.max(...heartRates)} bpm <i class="fa fa-info-circle" title="Highest recorded heart rate."></i></div>
