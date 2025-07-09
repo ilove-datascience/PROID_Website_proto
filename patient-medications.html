@@ -331,7 +331,7 @@
         <div class="section">
             <div class="section-title">
                 <i class="fas fa-clock"></i>
-                Today's Schedule
+                Due Now & Overdue
             </div>
             <div class="medication-grid" id="todaysMedications">
                 <!-- Populated by JavaScript -->
@@ -341,7 +341,7 @@
         <div class="section">
             <div class="section-title">
                 <i class="fas fa-list"></i>
-                All Medications
+                Complete Medication List
             </div>
             <div class="medication-grid" id="allMedications">
                 <!-- Populated by JavaScript -->
@@ -440,9 +440,25 @@
 
         function updateTodaysMedications() {
             const container = document.getElementById('todaysMedications');
-            const todaysMeds = medications.filter(med => 
-                med.status === 'pending' || med.status === 'overdue' || med.status === 'taken'
-            );
+            const now = new Date();
+            const currentHour = now.getHours();
+            
+            // Filter medications that are due today and need attention
+            const todaysMeds = medications.filter(med => {
+                return med.status === 'pending' || med.status === 'overdue';
+            });
+
+            if (todaysMeds.length === 0) {
+                container.innerHTML = `
+                    <div class="medication-item" style="text-align: center; opacity: 0.7;">
+                        <div class="medication-info">
+                            <div class="medication-name">All caught up!</div>
+                            <div class="medication-dosage">No pending medications for today</div>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
 
             container.innerHTML = todaysMeds.map(med => `
                 <div class="medication-item ${med.status}">
@@ -458,11 +474,9 @@
                         <span class="status-badge ${med.status}">
                             ${med.status.charAt(0).toUpperCase() + med.status.slice(1)}
                         </span>
-                        ${med.status === 'pending' || med.status === 'overdue' ? 
-                            `<button class="take-btn" onclick="takeMedication(${med.id})">
-                                <i class="fas fa-check"></i> Take
-                            </button>` : 
-                            ''}
+                        <button class="take-btn" onclick="takeMedication(${med.id})">
+                            <i class="fas fa-check"></i> Take
+                        </button>
                     </div>
                 </div>
             `).join('');
@@ -478,12 +492,15 @@
                         <div class="medication-dosage">${med.dosage} • ${med.frequency}</div>
                         <div class="medication-time">
                             <i class="fas fa-info-circle"></i>
-                            ${med.purpose}
+                            ${med.purpose} • Times: ${med.times.join(', ')}
                         </div>
                     </div>
                     <div class="medication-status">
-                        <button class="take-btn" onclick="editMedication(${med.id})">
-                            <i class="fas fa-edit"></i> Edit
+                        <span class="status-badge ${med.status}" style="margin-bottom: 8px;">
+                            ${med.status.charAt(0).toUpperCase() + med.status.slice(1)}
+                        </span>
+                        <button class="take-btn" onclick="editMedication(${med.id})" style="background: #6c757d;">
+                            <i class="fas fa-edit"></i> Manage
                         </button>
                     </div>
                 </div>
