@@ -182,6 +182,26 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
         }
+
+        .qr-auth-btn {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .qr-auth-btn i {
+            margin-right: 8px;
+        }
     </style>
 </head>
 <body>
@@ -253,6 +273,10 @@
                 <div class="title">Appointments</div>
                 <div class="description">Schedule and manage appointments</div>
             </div>
+        </div>
+
+        <div class="section" style="margin: 32px 0; text-align: center;">
+            <!-- Removed QR-auth button to prevent navigation back after authentication -->
         </div>
 
         <button class="emergency-btn" onclick="emergencyContact()">

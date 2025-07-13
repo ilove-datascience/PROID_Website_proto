@@ -1,9 +1,23 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request, redirect, session
 import csv
 import os
 import ast
 
 app = Flask(__name__)
+app.secret_key = 'replace-this-with-a-random-secret-key'
+@app.route('/api/authenticate', methods=['POST'])
+def authenticate():
+    # Accepts JSON: {"wristbandId": ..., "method": "qr" or "password", "password": ...}
+    data = request.get_json()
+    wristband_id = data.get('wristbandId')
+    method = data.get('method')
+    password = data.get('password')
+    # Simulate authentication logic
+    if method == 'qr' or (method == 'password' and password == 'demo123'):
+        session['authenticated'] = True
+        session['wristband_id'] = wristband_id
+        return redirect('/patient-dashboard.html')
+    return jsonify({'error': 'Authentication failed'}), 401
 
 @app.route('/')
 def serve_index():
@@ -166,6 +180,14 @@ def get_patient_by_id(user_id):
                 return jsonify(row)
     
     return jsonify({"error": "Patient not found"}), 404
+
+@app.route('/qr-auth.html')
+def serve_qr_auth():
+    return send_from_directory(os.getcwd(), 'qr-auth.html')
+
+@app.route('/qr-auth')
+def serve_qr_auth_short():
+    return send_from_directory(os.getcwd(), 'qr-auth.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

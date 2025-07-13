@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wristband QR Scan & Singpass Authentication</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <style>
+        /* Singpass branding */
+        .singpass-modal-card {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+            padding: 36px 32px 28px 32px;
+            text-align: center;
+            max-width: 340px;
+            width: 94vw;
+            position: relative;
+        }
+        .singpass-logo {
+            width: 110px;
+            margin-bottom: 18px;
+        }
+        .singpass-modal-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 8px;
+        }
+        .singpass-modal-desc {
+            color: #444;
+            margin-bottom: 24px;
+            font-size: 1.05rem;
+        }
+        .singpass-modal-btn {
+            background: #e60012;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 14px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 8px rgba(230,0,18,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: background 0.18s;
+        }
+        .singpass-modal-btn:active {
+            background: #b8000e;
+        }
+        .singpass-modal-divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin: 18px 0 16px 0;
+        }
+        .singpass-modal-cancel {
+            background: #f7fafd;
+            color: #e60012;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 0;
+            font-size: 1rem;
+            font-weight: 500;
+            width: 100%;
+            cursor: pointer;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+        html {
+            height: 100%;
+        }
+        body {
+            animation: fadeIn 0.7s cubic-bezier(.4,0,.2,1);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .container {
+            position: relative;
+            box-shadow: 0 4px 24px 0 rgba(102,126,234,0.10), 0 1.5px 8px 0 rgba(102,126,234,0.04);
+            background: rgba(255,255,255,0.96);
+            border-radius: 20px;
+            border: 1.5px solid #e0eafc;
+        }
+        /* Remove animated border for a calmer look */
+        .glass-card {
+            box-shadow: 0 2px 12px 0 rgba(102,126,234,0.10);
+            background: rgba(255,255,255,0.92);
+            border-radius: 16px;
+            border: 1px solid #e0eafc;
+        }
+        .singpass-btn, .glass-card button {
+            font-family: inherit;
+            letter-spacing: 0.01em;
+            border: none;
+            outline: none;
+            font-size: 1.08rem;
+            border-radius: 10px;
+            padding: 13px 0;
+            margin-bottom: 8px;
+            font-weight: 600;
+            background: linear-gradient(90deg, #e0eafc 0%, #cfdef3 100%);
+            color: #2a5298;
+            box-shadow: 0 1px 4px rgba(102,126,234,0.07);
+            transition: background 0.18s, box-shadow 0.18s, color 0.18s, transform 0.12s;
+        }
+        .singpass-btn:active, .glass-card button:active {
+            transform: scale(0.97);
+        }
+        .singpass-btn:focus-visible, .glass-card button:focus-visible {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+        .singpass-btn:disabled {
+            background: #f0f0f0 !important;
+            color: #b0b0b0 !important;
+            cursor: not-allowed;
+        }
+        /* Back button style */
+        .back-btn {
+            background: #f7fafd !important;
+            color: #2a5298 !important;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 1px 4px rgba(102,126,234,0.07);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            margin-bottom: 18px;
+        }
+        .back-btn:hover, .back-btn:focus-visible {
+            background: #e0eafc !important;
+            color: #2a5298 !important;
+        }
+        .container {
+            max-width: 420px;
+            margin: 40px auto;
+            background: rgba(255,255,255,0.82);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.13), 0 1.5px 8px 0 rgba(102,126,234,0.07);
+            padding: 32px 24px 24px 24px;
+            backdrop-filter: blur(8px);
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+        .glass-card {
+            background: rgba(255,255,255,0.32);
+            backdrop-filter: blur(16px);
+            border-radius: 28px;
+            box-shadow: 0 8px 32px rgba(102,126,234,0.13);
+            padding: 32px 24px;
+            margin-bottom: 24px;
+            border: 1.5px solid #e0eafc;
+            transition: box-shadow 0.2s, background 0.2s;
+        }
+        @media (max-width: 600px) {
+            .container {
+                max-width: 99vw;
+                margin: 0;
+                border-radius: 0;
+                padding: 10vw 2vw 4vw 2vw;
+            }
+            .glass-card {
+                border-radius: 0;
+                padding: 8vw 2vw;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+        }
+        .singpass-btn, .glass-card button {
+            box-shadow: 0 2px 8px rgba(102,126,234,0.10);
+            transition: background 0.18s, box-shadow 0.18s, color 0.18s;
+        }
+        .singpass-btn:hover, .glass-card button:hover {
+            background: linear-gradient(90deg, #764ba2 0%, #667eea 100%) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.18);
+        }
+        #qr-video {
+            animation: popIn 0.7s cubic-bezier(.4,2,.6,1) 1;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            80% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        .header p {
+            font-size: 1.1rem;
+            color: #444;
+            margin-bottom: 18px;
+        }
+        .qr-section {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        #qr-video {
+            width: 220px;
+            height: 220px;
+            border-radius: 16px;
+            background: #f8f9fa;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            position: relative;
+        }
+        #scan-anim {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        #scan-anim div {
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scanMove 2s infinite;
+        }
+        .scan-status {
+            margin-top: 16px;
+            font-size: 1.1rem;
+            color: #4caf50;
+        }
+        .singpass-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 28px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .singpass-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .success {
+            color: #4caf50;
+            font-weight: 600;
+            margin-top: 18px;
+        }
+        .error {
+            color: #f44336;
+            font-weight: 600;
+            margin-top: 18px;
+        }
+        @keyframes scanMove {
+            0% { top: 0; }
+            50% { top: 90%; }
+            100% { top: 0; }
+        }
+    </style>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/minified/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <div style="text-align: center;">
+                <div style="margin-bottom: 18px;">
+                    <button onclick="goBack()" style="background: rgba(102,126,234,0.12); color: #667eea; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(102,126,234,0.08); display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </button>
+                </div>
+                <h1 style="font-size: 2rem; font-weight: 700; color: #667eea; margin-bottom: 8px;">
+                    <i class="fas fa-qrcode"></i> Wristband QR Scan
+                </h1>
+                <p style="font-size: 1.1rem; color: #444; margin-bottom: 18px;">Scan your hospital wristband to begin Singpass authentication.</p>
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div id="qr-video" style="width: 220px; height: 220px; border-radius: 16px; background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: relative;">
+                        <div id="scan-anim" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                            <div style="width: 100%; height: 4px; background: linear-gradient(90deg, #667eea, #764ba2); position: absolute; top: 0; left: 0; animation: scanMove 2s infinite;"></div>
+                        </div>
+                    </div>
+                    <div class="scan-status" id="scanStatus" style="margin-top: 16px; font-size: 1.1rem; color: #4caf50;">Awaiting scan...</div>
+                </div>
+                <button class="singpass-btn" id="singpassBtn" disabled onclick="openSingpass()" style="margin-top: 28px;">
+                    <i class="fas fa-unlock"></i> Authenticate with Singpass
+                </button>
+                <div id="authResult" style="margin-top: 18px;"></div>
+                <div style="text-align: center; margin-bottom: 18px;">
+                    <button onclick="simulateScan()" style="background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; padding: 10px 22px; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 8px rgba(102,126,234,0.08);">
+                        <i class="fas fa-magic"></i> Simulate Scan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let wristbandId = null;
+        let scanStatus, singpassBtn, authResult;
+        window.addEventListener('DOMContentLoaded', function() {
+            scanStatus = document.getElementById('scanStatus');
+            singpassBtn = document.getElementById('singpassBtn');
+            authResult = document.getElementById('authResult');
+            startScanner();
+        });
+
+        function startScanner() {
+            Html5Qrcode.getCameras().then(cameras => {
+                if (cameras && cameras.length) {
+                    qrScanner.start(
+                        cameras[0].id,
+                        { fps: 10, qrbox: 200 },
+                        qrCodeMessage => {
+                            qrScanner.stop();
+                            wristbandId = qrCodeMessage;
+                            scanStatus.textContent = `Wristband ID: ${wristbandId}`;
+                            singpassBtn.disabled = false;
+                        },
+                        errorMessage => {
+                            scanStatus.textContent = `Scan error: ${errorMessage}`;
+                        }
+                    ).catch(err => {
+                        scanStatus.textContent = `Camera error: ${err}`;
+                    });
+                } else {
+                    scanStatus.textContent = 'No camera found.';
+                }
+            }).catch(err => {
+                scanStatus.textContent = `Camera error: ${err}`;
+            });
+        }
+
+        function openSingpass() {
+            singpassBtn.disabled = true;
+            scanStatus.textContent = 'Opening Singpass...';
+            showSingpassModal();
+        }
+
+        function showSingpassModal() {
+            // Create modal overlay
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                background: rgba(240,240,240,0.97); backdrop-filter: blur(2px);
+                display: flex; align-items: center; justify-content: center; z-index: 9999;`;
+            modal.innerHTML = `
+                <div data-singpass-modal style="background:#fff; border-radius:18px; box-shadow:0 8px 32px rgba(0,0,0,0.10); max-width:520px; width:98vw; padding:0;">
+                    <div style="background:#f7f7f7; border-radius:18px 18px 0 0; padding:0;">
+                        <div style="display:flex;align-items:center;gap:8px;padding:10px 24px 0 24px;">
+                            <img src='/static/singpass-logo.png' alt='Singpass logo' style='height:28px;border-radius:6px;'>
+                            <span style='font-size:1.08rem;color:#222;font-weight:600;'>singpass.gov.sg</span>
+                            <span style='margin-left:auto;color:#aaa;font-size:1.1rem;'><i class='fas fa-lock'></i></span>
+                        </div>
+                        <div style="border-bottom:3px solid #e60012; margin-top:8px;"></div>
+                        <div style="padding:10px 24px 0 24px;color:#e60012;font-weight:600;font-size:1.05rem;">A Singapore Government Agency Website</div>
+                    </div>
+                    <div style="display:flex;flex-wrap:wrap;gap:0;padding:0 0 0 0;">
+                        <div style="flex:1 1 260px;padding:32px 24px 24px 24px;min-width:220px;">
+                            <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                                <img src='/static/singpass-logo.png' alt='Singpass logo' style='height:32px;border-radius:6px;'>
+                                <span style='font-size:1.15rem;font-weight:700;color:#222;'>Welcome to Singpass</span>
+                            </div>
+                            <div style='color:#888;font-size:0.98rem;margin-bottom:18px;'>Your trusted digital identity</div>
+                            <div style='display:flex;flex-direction:column;gap:8px;'>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Reset password</div>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Register for Singpass</div>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Retrieve Singpass ID</div>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Have questions?</div>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Locate a counter</div>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Read how-to guides</div>
+                                <div style='display:flex;align-items:center;gap:6px;color:#e60012;font-size:0.97rem;'><i class='fas fa-chevron-right'></i> Contact us</div>
+                            </div>
+                        </div>
+                        <div style="flex:1 1 220px;min-width:180px;padding:32px 24px 24px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+                            <div style='background:#fff;border:1.5px solid #e60012;border-radius:14px;padding:20px 16px 16px 16px;box-shadow:0 2px 8px rgba(230,0,18,0.07);width:210px;max-width:96vw;display:flex;flex-direction:column;align-items:center;'>
+                                <div style='font-size:1.04rem;color:#222;font-weight:600;margin-bottom:10px;text-align:center;'>Scan with Singpass app<br>to log in</div>
+                                <div style='display:flex;justify-content:center;align-items:center;margin-bottom:10px;'>
+                                    <img src='https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=singpass-demo-${wristbandId}' alt='QR code' style='width:120px;height:120px;border-radius:8px;'>
+                                </div>
+                                <div style='color:#e60012;font-size:1.08rem;font-weight:700;text-align:center;margin-bottom:8px;'>singpass</div>
+                                <button id="mockSignInBtn" style='background:#e60012;color:#fff;border:none;border-radius:8px;padding:10px 0;font-size:1.08rem;font-weight:600;width:100%;margin-bottom:10px;cursor:pointer;'><i class="fas fa-fingerprint"></i> Simulate QR Scan</button>
+                                <button id="passwordLoginBtn" style='background:#f7fafd;color:#e60012;border:none;border-radius:8px;padding:8px 0;font-size:1rem;font-weight:500;width:100%;margin-bottom:6px;cursor:pointer;'>Use password login instead</button>
+                                <div id="passwordLoginArea" style="display:none;margin-top:10px;width:100%;">
+                                    <input id="passwordInput" type="password" placeholder="Enter password" style="width:100%;padding:10px;border-radius:8px;border:1px solid #e0eafc;margin-bottom:8px;font-size:1rem;box-sizing:border-box;">
+                                    <button id="submitPasswordBtn" style='background:#e60012;color:#fff;border:none;border-radius:8px;padding:10px 0;font-size:1rem;font-weight:600;width:100%;cursor:pointer;'>Login</button>
+                                    <div id="passwordError" style="color:#e60012;font-size:0.95rem;margin-top:6px;display:none;text-align:left;">Incorrect password. Please try again.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style='width:100%;display:flex;justify-content:center;margin-top:12px;'>
+                        <button onclick="document.body.removeChild(document.querySelector('[data-singpass-modal]').parentElement)" class="singpass-modal-cancel" style='margin:0 auto;max-width:220px;'>Cancel</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            // Simulate QR scan
+            document.getElementById('mockSignInBtn').onclick = function() {
+                modal.innerHTML = `<div class='singpass-modal-card' style='padding: 36px 32px;'><div style='font-size:2.5rem; color:#4caf50; margin-bottom:18px;'><i class='fas fa-check-circle fa-bounce'></i></div><div class='singpass-modal-title' style='color:#4caf50;'>Authentication Successful!</div><div class='singpass-modal-desc'>You are signed in for wristband <b>${wristbandId}</b>.<br>Welcome!</div></div>`;
+                scanStatus.textContent = 'Authenticated.';
+                authResult.innerHTML = `<div class='success'>Singpass authentication successful!<br>User verified for wristband <b>${wristbandId}</b>.</div>`;
+                // Use fetch to POST to backend for server-side redirect
+                fetch('/api/authenticate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ wristbandId: wristbandId, method: 'qr' })
+                }).then(resp => {
+                    if (resp.redirected) {
+                        window.location.href = resp.url;
+                    } else {
+                        resp.json().then(data => {
+                            authResult.innerHTML = `<div class='error'>${data.error || 'Authentication failed.'}</div>`;
+                        });
+                    }
+                });
+            };
+            // Password login fallback
+            document.getElementById('passwordLoginBtn').onclick = function() {
+                document.getElementById('passwordLoginArea').style.display = 'block';
+            };
+            document.getElementById('submitPasswordBtn').onclick = function() {
+                const pw = document.getElementById('passwordInput').value;
+                fetch('/api/authenticate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ wristbandId: wristbandId, method: 'password', password: pw })
+                }).then(resp => {
+                    if (resp.redirected) {
+                        window.location.href = resp.url;
+                    } else {
+                        resp.json().then(data => {
+                            document.getElementById('passwordError').style.display = 'block';
+                        });
+                    }
+                });
+            };
+            document.body.appendChild(modal);
+        }
+
+        function goBack() {
+            window.location.href = '/patient-dashboard.html';
+        }
+
+        function simulateScan() {
+            wristbandId = 'MOCK-WRISTBAND-12345';
+            if (scanStatus) scanStatus.textContent = `Wristband ID: ${wristbandId}`;
+            if (singpassBtn) singpassBtn.disabled = false;
+        }
+    </script>
+</body>
+</html>

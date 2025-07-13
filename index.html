@@ -325,13 +325,8 @@
         let charts = {};
         
         function navigateToPatient() {
-            const patientSelect = document.getElementById('patientSelect');
-            const selectedPatientId = patientSelect.value;
-            if (selectedPatientId) {
-                window.location.href = `/patient/${selectedPatientId}`;
-            } else {
-                window.location.href = '/patient.html';
-            }
+            // Route to QR/Singpass authentication page before dashboard
+            window.location.href = '/qr-auth';
         }
         
         fetch('/api/patient-data')
