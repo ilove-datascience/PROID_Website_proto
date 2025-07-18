@@ -1,4 +1,4 @@
-# 🏥 PROID Patient Health Monitoring System
+# 🏥 PROID MOCK Patient Health Monitoring System
 
 **A comprehensive, modern web-based healthcare dashboard for remote patient monitoring and wristband device integration.**
 
@@ -106,8 +106,8 @@ This cutting-edge healthcare technology platform provides healthcare professiona
 1. **Download & Extract**
    ```powershell
    # Download the repository
-   git clone https://github.com/your-repo/proid-health-dashboard.git
-   cd proid-health-dashboard
+   git clone https://github.com/ilove-datascience/PROID_Website_proto
+   cd PROID_Website_proto
    ```
 
 2. **Install Dependencies**
@@ -183,7 +183,7 @@ PROID_Website_proto/
 #### **Step 4: Configuration (Optional)**
 ```python
 # Edit the Flask app to customize settings
-SECRET_KEY = 'your-super-secret-key-here'  # Replace with secure random key
+
 DEBUG = True  # Set to False in production
 PORT = 5000   # Change if needed
 ```
