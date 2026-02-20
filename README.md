@@ -732,131 +732,82 @@ UI Update → Real-time Chart Refresh → User Feedback
     .container { width: 1320px; padding: 48px; }
 }
 ```
+#### Touch-Friendly Interface
 
-#### **Touch-Friendly Interface**
-- **Minimum Touch Targets:** 44px × 44px for all interactive elements
-- **Gesture Support:** Swipe navigation for mobile interfaces
-- **Haptic Feedback:** Integration with device vibration APIs
-- **Voice Commands:** Accessibility through voice navigation
-
----
-
-## 🚀 Future Roadmap & Enhancements
-
-### **🔮 Planned Features (Next 6 Months)**
-
-#### **Advanced Analytics**
-- **🧠 Machine Learning Integration:** Predictive health analytics using patient data patterns
-- **📊 Population Health Dashboard:** Aggregate insights for healthcare administrators
-- **🎯 Personalized Recommendations:** AI-driven treatment and lifestyle suggestions
-- **📈 Outcome Prediction:** Risk modeling for hospital readmissions and complications
-
-#### **Enhanced User Experience**
-- **🎙️ Voice Assistant Integration:** Voice commands for hands-free operation
-- **🌐 Progressive Web App (PWA):** Offline functionality and native app experience
-- **🔔 Smart Notifications:** Contextual alerts based on user behavior and health status
-- **🎨 Customizable Dashboards:** User-configurable interface layouts
-
-#### **Integration Capabilities**
-- **🏥 EHR Integration:** Direct connection with Electronic Health Records
-- **📱 Wearable Device Support:** Integration with Apple Watch, Fitbit, and other devices
-- **🔗 API Ecosystem:** RESTful APIs for third-party integrations
-- **☁️ Cloud Deployment:** AWS, Azure, and Google Cloud deployment options
-
-### **🌟 Long-Term Vision (12+ Months)**
-
-#### **Artificial Intelligence & Machine Learning**
-- **🤖 Clinical Decision Support:** AI-powered diagnostic assistance
-- **📊 Predictive Analytics:** Early warning systems for health deterioration
-- **🧬 Genomic Integration:** Personalized medicine based on genetic profiles
-- **🔬 Research Platform:** Clinical trial and research data collection
-
-#### **Global Scale & Accessibility**
-- **🌍 Multi-Language Support:** Complete localization for global deployment
-- **♿ Advanced Accessibility:** AI-powered accessibility features
-- **🌐 Telemedicine Integration:** Complete virtual care platform
-- **📱 Mobile Apps:** Native iOS and Android applications
-
-#### **Enterprise Features**
-- **🏢 Multi-Tenant Architecture:** Support for multiple healthcare organizations
-- **📊 Advanced Analytics:** Business intelligence and reporting capabilities
-- **🔒 Enhanced Security:** Zero-trust security model and advanced encryption
-- **⚡ High Performance:** Microservices architecture for scalability
+- Minimum Touch Targets: 44px × 44px for all interactive elements  
+- Gesture Support: Swipe navigation for mobile interfaces  
+- Haptic Feedback (Simulated): Conceptual integration with device vibration APIs  
+- Voice Command Support (UI Concept): Accessibility-oriented interaction design  
 
 ---
 
-## 🤝 Contributing & Community
+## 📝 Legal & Usage Notice
 
-### **🛠️ Development Guidelines**
+### 📄 Project Status
 
-#### **Code Quality Standards**
-- **Python PEP 8:** Follow Python style guidelines
-- **JavaScript ES6+:** Modern JavaScript with async/await
-- **CSS BEM Methodology:** Block, Element, Modifier naming convention
-- **Git Workflow:** Feature branches with pull request reviews
-- **Testing:** Unit tests for all critical functions
+This repository is a prototype demonstration project built for academic and learning purposes.
 
-#### **Contributing Process**
-1. **Fork the Repository** → Create your own copy
-2. **Create Feature Branch** → `git checkout -b feature/amazing-feature`
-3. **Write Tests** → Ensure all new features have tests
-4. **Follow Style Guide** → Maintain consistent code quality
-5. **Update Documentation** → Keep README and comments current
-6. **Submit Pull Request** → Detailed description of changes
+It includes:
 
-### **📞 Support & Community**
+- Frontend UI mockups  
+- A simple Flask backend simulation  
+- Sample CSV-based patient data  
+- Simulated authentication flows  
 
-#### **Getting Help**
-- **📚 Documentation:** Comprehensive guides and API references
-- **💬 Community Forum:** Stack Overflow with `proid-health` tag
-- **📧 Email Support:** support@proid-health.com
-- **🐛 Bug Reports:** GitHub Issues with detailed reproduction steps
-- **💡 Feature Requests:** GitHub Discussions for new ideas
-
-#### **Community Resources**
-- **📖 Developer Blog:** Technical articles and best practices
-- **🎥 Video Tutorials:** Step-by-step implementation guides
-- **🌐 Community Slack:** Real-time chat with developers
-- **📅 Monthly Meetups:** Virtual developer meetups and Q&A sessions
+⚠️ This is NOT production-ready software.
 
 ---
 
-## 📝 License & Legal
+### ⚖️ License
 
-### **📄 License Information**
-This project is released under the **MIT License**, providing maximum flexibility for both personal and commercial use.
+This project currently does not include a formal license.
 
-**MIT License Terms:**
-- ✅ **Commercial Use:** Use in commercial applications
-- ✅ **Modification:** Modify and adapt the code
-- ✅ **Distribution:** Share and distribute the software
-- ✅ **Private Use:** Use for personal or internal projects
-- ❌ **Liability:** No warranty or liability provided
-- ❌ **Patent Claims:** No patent rights granted
+All rights reserved by the author.
 
-### **🏥 Healthcare Compliance**
-- **HIPAA Readiness:** Architecture designed for HIPAA compliance
-- **FDA Considerations:** Not intended as medical device software
-- **Clinical Use:** For demonstration and development purposes
-- **Data Protection:** Implements privacy-by-design principles
-- **Regulatory Guidance:** Consult legal counsel for production use
+You may:
+
+- View and study the code for educational purposes  
+- Reference implementation ideas  
+
+You may NOT:
+
+- Use this code in commercial products  
+- Redistribute modified versions  
+- Deploy it in real healthcare environments  
+
+If you are interested in using or adapting parts of this project, please contact the repository owner.
+
+---
+
+### 🏥 Healthcare Disclaimer
+
+This system is a non-clinical prototype created for demonstration purposes only.
+
+- It is NOT medical device software  
+- It is NOT FDA approved  
+- It is NOT HIPAA compliant  
+- It should NOT be used for real patient monitoring  
+- All data included is synthetic sample data  
+
+The risk scoring and health analytics logic are simplified simulations and should not be interpreted as real medical advice.
 
 ---
 
 ## 🙏 Acknowledgments
 
-### **🏆 Recognition & Credits**
-- **Healthcare Community:** Thank you to healthcare professionals who provided feedback
-- **Open Source Libraries:** Chart.js, Font Awesome, and other amazing open source tools
-- **Design Inspiration:** Modern healthcare interfaces and user experience patterns
-- **Testing Partners:** Beta testing organizations and individual contributors
-- **Security Reviewers:** Cybersecurity professionals who helped harden the system
-
-### **🎯 Mission Statement**
-*"Empowering healthcare through innovative technology, beautiful design, and patient-centered care. We believe that great health technology should be accessible, intuitive, and focused on improving lives."*
+- Built as part of academic exploration into digital healthcare systems  
+- Inspired by modern healthcare dashboards and remote patient monitoring concepts  
+- Utilizes open-source tools such as Flask and Chart.js  
 
 ---
 
-**✨ Ready to revolutionize healthcare monitoring? Get started today! ✨**
+## 🎯 Project Purpose
 
-For questions, support, or collaboration opportunities, please reach out to our team or create an issue in the repository. Together, we can build the future of healthcare technology.
+This prototype explores how a connected healthcare dashboard might integrate:
+
+- Wearable device data streams  
+- Risk assessment logic  
+- Medication tracking  
+- Patient-provider communication UI  
+
+The focus of this project is system design, user experience, and architectural exploration, not clinical deployment.
